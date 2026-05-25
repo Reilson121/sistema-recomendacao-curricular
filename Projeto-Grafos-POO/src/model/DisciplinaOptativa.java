@@ -1,27 +1,35 @@
 package model;
 
-public class DisciplinaBasica extends Disciplina {
+public class DisciplinaOptativa extends Disciplina {
 
-    private String area;
+    private String categoria;
 
-    public DisciplinaBasica(
+    public DisciplinaOptativa(
             String codigo,
             int id,
             String nome,
             int cargaHoraria,
             int periodo,
-            String area) {
+            String categoria) {
 
-        super(codigo, id, nome, cargaHoraria, periodo,TipoDisciplina.BASICA);
-        this.area = area;
+        super(
+                codigo,
+                id,
+                nome,
+                cargaHoraria,
+                periodo,
+                TipoDisciplina.OPTATIVA
+        );
+
+        this.categoria = categoria;
     }
 
-    public String getArea() {
-        return area;
+    public String getCategoria() {
+        return categoria;
     }
 
-    public void setArea(String area) {
-        this.area = area;
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     @Override
@@ -33,7 +41,7 @@ public class DisciplinaBasica extends Disciplina {
         System.out.println("Carga Horária: " + getCargaHoraria());
         System.out.println("Período: " + getPeriodo());
         System.out.println("Tipo: " + getTipo());
-        System.out.println("Área: " + area);
+        System.out.println("Categoria: " + categoria);
 
         System.out.println("Pré-requisitos:");
 

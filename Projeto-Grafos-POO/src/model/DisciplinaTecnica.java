@@ -5,8 +5,23 @@ public class DisciplinaTecnica extends Disciplina {
     private String ementa;
 
 
-    public DisciplinaTecnica(int id, String nome, int cargaHoraria, int periodo, String ementa) {
-        super(id, nome, cargaHoraria, periodo);
+    public DisciplinaTecnica(
+            String codigo,
+            int id,
+            String nome,
+            int cargaHoraria,
+            int periodo,
+            String ementa) {
+
+        super(
+                codigo,
+                id,
+                nome,
+                cargaHoraria,
+                periodo,
+                TipoDisciplina.TECNICA
+        );
+
         this.ementa = ementa;
     }
 
@@ -21,16 +36,25 @@ public class DisciplinaTecnica extends Disciplina {
     @Override
     public void exibirInformacoes() {
 
+        System.out.println("Código: " + getCodigo());
         System.out.println("ID: " + getId());
         System.out.println("Nome: " + getNome());
         System.out.println("Carga Horária: " + getCargaHoraria());
         System.out.println("Período: " + getPeriodo());
+        System.out.println("Tipo: " + getTipo());
         System.out.println("Ementa: " + ementa);
 
         System.out.println("Pré-requisitos:");
 
-        for (Disciplina d : getPreRequisitos()) {
-            System.out.println("- " + d.getNome());
+        if (getPreRequisitos().isEmpty()) {
+
+            System.out.println("Nenhum pré-requisito.");
+
+        } else {
+
+            for (Disciplina d : getPreRequisitos()) {
+                System.out.println("- " + d.getNome());
+            }
         }
     }
 }
