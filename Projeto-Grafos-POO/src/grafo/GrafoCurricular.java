@@ -2,134 +2,192 @@ package grafo;
 
 import model.Disciplina;
 
-import java.util.Map;
-import java.util.List;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 
+/*
+ * Classe responsável pela estrutura do grafo curricular
+ */
 public class GrafoCurricular {
 
-    // Armazena disciplinas pelo ID
-    private Map<Integer, Disciplina> disciplinas;
+    // Estrutura de lista de adjacência
+    private Map<Disciplina, List<Disciplina>> listaAdjacencia;
 
-    // Lista de adjacência do grafo
-    // chave = disciplina
-    // valor = lista de disciplinas dependentes
-    private Map<Disciplina, List<Disciplina>> adjacencias;
-
-    // Armazena o grau de entrada de cada disciplina
-    // (quantos pré-requisitos ela possui)
+    // Estrutura utilizada para armazenar grau de entrada
     private Map<Disciplina, Integer> grauEntrada;
 
-    // Construtor
+    // Construtor da classe
     public GrafoCurricular() {
 
-        disciplinas = new HashMap<>();
-        adjacencias = new HashMap<>();
+        listaAdjacencia = new HashMap<>();
         grauEntrada = new HashMap<>();
     }
 
-    // Adiciona uma disciplina ao grafo
-    public void adicionarDisciplina(Disciplina d) {
+    // Método responsável por adicionar uma disciplina no grafo
+    public void adicionarDisciplina(Disciplina disciplina) {
 
-        // Salva disciplina pelo ID
-        disciplinas.put(d.getId(), d);
-
-        // Cria lista vazia de adjacentes se ainda não existir
-        adjacencias.putIfAbsent(d, new ArrayList<>());
+        // Adiciona a disciplina caso ela ainda não exista
+        listaAdjacencia.putIfAbsent(disciplina, new ArrayList<>());
 
         // Inicializa grau de entrada com 0
-        grauEntrada.putIfAbsent(d, 0);
+        grauEntrada.putIfAbsent(disciplina, 0);
     }
 
-    // Adiciona uma aresta entre disciplinas
-    // origem -> destino
-    // significa:
-    // origem é pré-requisito de destino
-    public void adicionarAresta(Disciplina origem, Disciplina destino) {
+    // Método responsável por adicionar uma aresta no grafo
+    public void adicionarAresta(
+            Disciplina origem,
+            Disciplina destino) {
 
-        // Garante que ambas existem no mapa
-        adjacencias.putIfAbsent(origem, new ArrayList<>());
-        adjacencias.putIfAbsent(destino, new ArrayList<>());
+        // Adiciona o destino na lista de adjacência da origem
+        listaAdjacencia.get(origem).add(destino);
 
-        // Inicializa grau de entrada se necessário
-        grauEntrada.putIfAbsent(origem, 0);
-        grauEntrada.putIfAbsent(destino, 0);
-
-        // Adiciona destino na lista de adjacência da origem
-        adjacencias.get(origem).add(destino);
-
-        // Incrementa grau de entrada do destino
-        grauEntrada.put(destino, grauEntrada.get(destino) + 1);
-
-        // Adiciona origem como pré-requisito da disciplina destino
+        // Adiciona o pré-requisito na disciplina
         destino.adicionarPreRequisito(origem);
     }
 
-    // Retorna disciplinas adjacentes
-    public List<Disciplina> obterAdjacentes(Disciplina d) {
-
-        return adjacencias.get(d);
-    }
-
-    // Retorna todas as disciplinas cadastradas
-    public Collection<Disciplina> obterTodasDisciplinas() {
-
-        return disciplinas.values();
-    }
-
-    // Recalcula os graus de entrada
-    public void calcularGrauEntrada() {
-
-        // Zera todos os graus
-        grauEntrada.clear();
-
-        for (Disciplina d : disciplinas.values()) {
-            grauEntrada.put(d, 0);
-        }
-
-        // Percorre todas as arestas
-        for (Disciplina origem : adjacencias.keySet()) {
-
-            for (Disciplina destino : adjacencias.get(origem)) {
-
-                // Incrementa grau do destino
-                grauEntrada.put(
-                        destino,
-                        grauEntrada.get(destino) + 1
-                );
-            }
-        }
-    }
-
-    // Retorna grau de entrada de uma disciplina
-    public int getGrauEntrada(Disciplina d) {
-
-        return grauEntrada.get(d);
-    }
-
-    // Exibe o grafo na tela
+    // Método responsável por exibir o grafo
     public void mostrarGrafo() {
 
-        for (Disciplina d : adjacencias.keySet()) {
+        // Percorre todas as disciplinas
+        for (Disciplina disciplina : listaAdjacencia.keySet()) {
 
-            System.out.print(d.getNome() + " -> ");
+            System.out.print(
+                    disciplina.getNome() + " -> "
+            );
 
-            // Mostra adjacentes
-            for (Disciplina adj : adjacencias.get(d)) {
-                System.out.print(adj.getNome() + " ");
+            // Percorre os vizinhos da disciplina
+            for (Disciplina vizinho :
+                    listaAdjacencia.get(disciplina)) {
+
+                System.out.print(
+                        vizinho.getNome() + " | "
+                );
             }
 
             System.out.println();
         }
     }
 
-    // Limpa completamente o grafo
+    // Método responsável pelo cálculo do grau de entrada
+    public void calcularGrauEntrada() {
+
+        // Reinicializa os graus
+        for (Disciplina disciplina : listaAdjacencia.keySet()) {
+
+            grauEntrada.put(disciplina, 0);
+        }
+
+        // Percorre todas as arestas do grafo
+        for (Disciplina disciplina : listaAdjacencia.keySet()) {
+
+            for (Disciplina adj :
+                    listaAdjacencia.get(disciplina)) {
+
+                grauEntrada.put(
+                        adj,
+                        grauEntrada.get(adj) + 1
+                );
+            }
+        }
+    }
+
+    // Método responsável por retornar o grau de entrada
+    public int getGrauEntrada(Disciplina disciplina) {
+
+        return grauEntrada.get(disciplina);
+    }
+
+    // Método responsável por retornar adjacentes
+    public List<Disciplina> obterAdjacentes(
+            Disciplina disciplina) {
+
+        return listaAdjacencia.get(disciplina);
+    }
+
+    // Método responsável por retornar todas as disciplinas
+    public Set<Disciplina> obterTodasDisciplinas() {
+
+        return listaAdjacencia.keySet();
+    }
+
+    // Método responsável por identificar disciplinas gargalo
+    public void identificarGargalos() {
+
+        System.out.println("\n===== DISCIPLINAS GARGALO =====");
+
+        int maiorQuantidade = 0;
+
+        // Verifica qual disciplina possui mais dependências
+        for (Disciplina disciplina : listaAdjacencia.keySet()) {
+
+            int quantidade =
+                    listaAdjacencia.get(disciplina).size();
+
+            if (quantidade > maiorQuantidade) {
+
+                maiorQuantidade = quantidade;
+            }
+        }
+
+        // Exibe as disciplinas gargalo
+        for (Disciplina disciplina : listaAdjacencia.keySet()) {
+
+            int quantidade =
+                    listaAdjacencia.get(disciplina).size();
+
+            if (quantidade == maiorQuantidade) {
+
+                System.out.println(
+                        disciplina.getNome()
+                                + " -> "
+                                + quantidade
+                                + " dependências"
+                );
+            }
+        }
+    }
+
+    // Método responsável por calcular o tempo mínimo do curso
+    public void calcularTempoMinimo() {
+
+        int totalDisciplinas =
+                listaAdjacencia.keySet().size();
+
+        int limitePorSemestre = 6;
+
+        int semestres =
+                (int) Math.ceil(
+                        (double) totalDisciplinas
+                                / limitePorSemestre
+                );
+
+        System.out.println(
+                "\nTempo mínimo estimado: "
+                        + semestres
+                        + " semestres."
+        );
+    }
+
+    // Getter da lista de adjacência
+    public Map<Disciplina, List<Disciplina>>
+    getListaAdjacencia() {
+
+        return listaAdjacencia;
+    }
+
+    // Setter da lista de adjacência
+    public void setListaAdjacencia(
+            Map<Disciplina, List<Disciplina>>
+                    listaAdjacencia) {
+
+        this.listaAdjacencia = listaAdjacencia;
+    }
+    // Método responsável por limpar o grafo
     public void limparGrafo() {
 
-        disciplinas.clear();
-        adjacencias.clear();
+        // Remove todas as disciplinas e arestas
+        listaAdjacencia.clear();
+
+        // Remove todos os graus de entrada
         grauEntrada.clear();
     }
 }

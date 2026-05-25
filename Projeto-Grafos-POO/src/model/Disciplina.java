@@ -5,19 +5,31 @@ import java.util.ArrayList;
 
 public abstract class Disciplina {
 
+    private String codigo;
     private int id;
     private String nome;
     private int cargaHoraria;
     private int periodo;
+    private TipoDisciplina tipo;
     private List<Disciplina> preRequisitos;
 
-    public Disciplina(int id, String nome, int cargaHoraria, int periodo) {
+    public Disciplina(String codigo, int id, String nome, int cargaHoraria, int periodo, TipoDisciplina tipo) {
 
+        this.codigo = codigo;
         this.id = id;
         this.nome = nome;
         this.cargaHoraria = cargaHoraria;
         this.periodo = periodo;
         this.preRequisitos = new ArrayList<>();
+        this.tipo = tipo;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
     public int getId() {
@@ -27,6 +39,7 @@ public abstract class Disciplina {
     public void setId(int id) {
         this.id = id;
     }
+
 
     public String getNome() {
         return nome;
@@ -52,6 +65,14 @@ public abstract class Disciplina {
         this.periodo = periodo;
     }
 
+    public TipoDisciplina getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoDisciplina tipo) {
+        this.tipo = tipo;
+    }
+
     public List<Disciplina> getPreRequisitos() {
         return preRequisitos;
     }
@@ -61,7 +82,15 @@ public abstract class Disciplina {
     }
 
     public void adicionarPreRequisito(Disciplina d) {
-        preRequisitos.add(d);
+
+        if (d != null && d != this && !preRequisitos.contains(d)) {
+            preRequisitos.add(d);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return nome;
     }
 
     public abstract void exibirInformacoes();
