@@ -1,9 +1,7 @@
 package main;
 
-import algoritmo.DFS;
-import algoritmo.KahnTopologicalSort;
-import grafo.GrafoCurricular;
 import model.Disciplina;
+import sistema.SistemaAcademico;
 import util.LeitorCSV;
 
 import java.util.Map;
@@ -12,8 +10,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // Criação do grafo curricular
-        GrafoCurricular grafo = new GrafoCurricular();
+        // Criação do sistema acadêmico
+        // internamente já cria o grafo, DFS e Kahn
+        SistemaAcademico sistema = new SistemaAcademico();
 
         // Carrega todas as disciplinas do arquivo CSV
         Map<String, Disciplina> disciplinas =
@@ -21,44 +20,36 @@ public class Main {
                         "dados/disciplinas.csv"
                 );
 
-        // Adiciona todas as disciplinas no grafo
+        // Cadastra cada disciplina no sistema
         for (Disciplina d : disciplinas.values()) {
 
-            grafo.adicionarDisciplina(d);
+            sistema.cadastrarDisciplina(d);
         }
 
         // Carrega os pré-requisitos e cria as arestas do grafo
         LeitorCSV.carregarPrerequisitos(
                 "dados/prerequisitos.csv",
-                grafo,
+                sistema.getGrafo(),
                 disciplinas
         );
 
-        // Exibe mensagem inicial
-        System.out.println(
-                "===== GRAFO CURRICULAR ====="
-        );
+        // Exibe a estrutura do grafo curricular
+        sistema.exibirGrafo();
 
-        // Mostra o grafo no console
-        grafo.mostrarGrafo();
+        // Exibe informações detalhadas de todas as disciplinas
+        // polimorfismo: chama exibirInformacoes() de cada subclasse
+        sistema.exibirTodasDisciplinas();
 
         // Executa ordenação topológica usando DFS
-        DFS dfs = new DFS(grafo);
-
-        dfs.ordenacaoTopologica();
+        sistema.executarDFS();
 
         // Executa ordenação topológica usando algoritmo de Kahn
-        KahnTopologicalSort kahn =
-                new KahnTopologicalSort(grafo);
-
-        kahn.executarOrdenacao();
-
-        kahn.mostrarOrdenacao();
+        sistema.executarKahn();
 
         // Identifica disciplinas gargalo
-        grafo.identificarGargalos();
+        sistema.exibirGargalos();
 
         // Calcula tempo mínimo estimado do curso
-        grafo.calcularTempoMinimo();
+        sistema.exibirTempoMinimo();
     }
 }
