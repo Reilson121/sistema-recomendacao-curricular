@@ -44,17 +44,7 @@ public class DisciplinaTecnica extends Disciplina {
         System.out.println("Tipo: " + getTipo());
         System.out.println("Ementa: " + ementa);
 
-        System.out.println("Pré-requisitos:");
-
-        if (getPreRequisitos().isEmpty()) {
-
-            System.out.println("Nenhum pré-requisito.");
-
-        } else {
-
-            for (Disciplina d : getPreRequisitos()) {
-                System.out.println("- " + d.getNome());
-            }
-        }
+        exibirPreRequisitos();
     }
+
 }

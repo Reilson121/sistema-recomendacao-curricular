@@ -149,22 +149,120 @@ public class GrafoCurricular {
     // Método responsável por calcular o tempo mínimo do curso
     public void calcularTempoMinimo() {
 
-        int totalDisciplinas =
-                listaAdjacencia.keySet().size();
-
-        int limitePorSemestre = 6;
-
-        int semestres =
-                (int) Math.ceil(
-                        (double) totalDisciplinas
-                                / limitePorSemestre
-                );
+        int maiorCaminho = obterMaiorCaminho();
 
         System.out.println(
-                "\nTempo mínimo estimado: "
-                        + semestres
+                "\nMaior cadeia de pré-requisitos: "
+                        + maiorCaminho
+                        + " disciplinas."
+        );
+
+        System.out.println(
+                "Tempo mínimo estimado considerando "
+                        + "as dependências: "
+                        + maiorCaminho
                         + " semestres."
         );
+    }
+
+    // Método responsável por verificar se o grafo possui ciclo
+    public boolean possuiCiclo() {
+
+        Set<Disciplina> visitados = new HashSet<>();
+
+        Set<Disciplina> pilhaRecursao = new HashSet<>();
+
+        for (Disciplina disciplina : listaAdjacencia.keySet()) {
+
+            if (dfsCiclo(
+                    disciplina,
+                    visitados,
+                    pilhaRecursao)) {
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Método auxiliar da verificação de ciclos
+    private boolean dfsCiclo(
+            Disciplina disciplina,
+            Set<Disciplina> visitados,
+            Set<Disciplina> pilhaRecursao) {
+
+        if (pilhaRecursao.contains(disciplina)) {
+
+            return true;
+        }
+
+        if (visitados.contains(disciplina)) {
+
+            return false;
+        }
+
+        visitados.add(disciplina);
+
+        pilhaRecursao.add(disciplina);
+
+        for (Disciplina adjacente :
+                listaAdjacencia.get(disciplina)) {
+
+            if (dfsCiclo(
+                    adjacente,
+                    visitados,
+                    pilhaRecursao)) {
+
+                return true;
+            }
+        }
+
+        pilhaRecursao.remove(disciplina);
+
+        return false;
+    }
+
+    // Método responsável por encontrar o maior caminho do grafo
+    public int obterMaiorCaminho() {
+
+        int maior = 0;
+
+        for (Disciplina disciplina :
+                listaAdjacencia.keySet()) {
+
+            maior = Math.max(
+                    maior,
+                    calcularProfundidade(disciplina)
+            );
+        }
+
+        return maior;
+    }
+
+    // Método auxiliar utilizado para calcular profundidade
+    private int calcularProfundidade(
+            Disciplina disciplina) {
+
+        List<Disciplina> adjacentes =
+                listaAdjacencia.get(disciplina);
+
+        if (adjacentes.isEmpty()) {
+
+            return 1;
+        }
+
+        int maior = 0;
+
+        for (Disciplina adjacente : adjacentes) {
+
+            maior = Math.max(
+                    maior,
+                    calcularProfundidade(adjacente)
+            );
+        }
+
+        return maior + 1;
     }
 
     // Getter da lista de adjacência
@@ -181,6 +279,7 @@ public class GrafoCurricular {
 
         this.listaAdjacencia = listaAdjacencia;
     }
+
     // Método responsável por limpar o grafo
     public void limparGrafo() {
 

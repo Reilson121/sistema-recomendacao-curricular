@@ -13,7 +13,13 @@ public abstract class Disciplina {
     private TipoDisciplina tipo;
     private List<Disciplina> preRequisitos;
 
-    public Disciplina(String codigo, int id, String nome, int cargaHoraria, int periodo, TipoDisciplina tipo) {
+    public Disciplina(
+            String codigo,
+            int id,
+            String nome,
+            int cargaHoraria,
+            int periodo,
+            TipoDisciplina tipo) {
 
         this.codigo = codigo;
         this.id = id;
@@ -39,7 +45,6 @@ public abstract class Disciplina {
     public void setId(int id) {
         this.id = id;
     }
-
 
     public String getNome() {
         return nome;
@@ -88,9 +93,46 @@ public abstract class Disciplina {
         }
     }
 
+    protected void exibirPreRequisitos() {
+
+        System.out.println("Pré-requisitos:");
+
+        if (preRequisitos.isEmpty()) {
+
+            System.out.println("Nenhum pré-requisito.");
+
+        } else {
+
+            for (Disciplina d : preRequisitos) {
+                System.out.println("- " + d.getNome());
+            }
+        }
+    }
+
     @Override
     public String toString() {
-        return nome;
+        return codigo + " - " + nome;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        Disciplina outra = (Disciplina) obj;
+
+        return codigo.equals(outra.codigo);
+    }
+
+    @Override
+    public int hashCode() {
+        return codigo.hashCode();
     }
 
     public abstract void exibirInformacoes();

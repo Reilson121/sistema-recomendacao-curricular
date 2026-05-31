@@ -5,6 +5,5 @@ public enum TipoDisciplina {
     BASICA,
     TECNICA,
     OPTATIVA,
-    HIBRIDA,
-    EXTENSAO
+
 }

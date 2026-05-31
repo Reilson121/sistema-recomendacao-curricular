@@ -5,6 +5,7 @@ import algoritmo.DFS;
 import algoritmo.KahnTopologicalSort;
 
 import model.Disciplina;
+import model.TipoDisciplina;
 
 public class SistemaAcademico {
 
@@ -111,6 +112,110 @@ public class SistemaAcademico {
         }
     }
 
+    // Busca disciplina pelo nome
+    public Disciplina buscarDisciplinaPorNome(String nome) {
+
+        for (Disciplina d :
+                grafo.obterTodasDisciplinas()) {
+
+            if (d.getNome().equalsIgnoreCase(nome)) {
+
+                return d;
+            }
+        }
+
+        return null;
+    }
+
+    // Lista disciplinas de um período específico
+    public void listarDisciplinasPorPeriodo(int periodo) {
+
+        System.out.println(
+                "\n===== DISCIPLINAS DO "
+                        + periodo
+                        + "º PERÍODO ====="
+        );
+
+        boolean encontrou = false;
+
+        for (Disciplina d :
+                grafo.obterTodasDisciplinas()) {
+
+            if (d.getPeriodo() == periodo) {
+
+                System.out.println(
+                        d.getCodigo()
+                                + " - "
+                                + d.getNome()
+                );
+
+                encontrou = true;
+            }
+        }
+
+        if (!encontrou) {
+
+            System.out.println(
+                    "Nenhuma disciplina encontrada."
+            );
+        }
+    }
+
+    // Exibe estatísticas do currículo
+    public void exibirEstatisticas() {
+
+        int total = 0;
+        int basicas = 0;
+        int tecnicas = 0;
+        int optativas = 0;
+
+        for (Disciplina d :
+                grafo.obterTodasDisciplinas()) {
+
+            total++;
+
+            if (d.getTipo() ==
+                    TipoDisciplina.BASICA) {
+
+                basicas++;
+
+            } else if (d.getTipo() ==
+                    TipoDisciplina.TECNICA) {
+
+                tecnicas++;
+
+            } else if (d.getTipo() ==
+                    TipoDisciplina.OPTATIVA) {
+
+                optativas++;
+            }
+        }
+
+        System.out.println(
+                "\n===== ESTATÍSTICAS ====="
+        );
+
+        System.out.println(
+                "Total de disciplinas: "
+                        + total
+        );
+
+        System.out.println(
+                "Disciplinas básicas: "
+                        + basicas
+        );
+
+        System.out.println(
+                "Disciplinas técnicas: "
+                        + tecnicas
+        );
+
+        System.out.println(
+                "Disciplinas optativas: "
+                        + optativas
+        );
+    }
+
     // Exibe estrutura do grafo
     public void exibirGrafo() {
 
@@ -130,7 +235,82 @@ public class SistemaAcademico {
     // Exibe cálculo do tempo mínimo
     public void exibirTempoMinimo() {
 
+        if (grafo.possuiCiclo()) {
+
+            System.out.println(
+                    "\nNão é possível calcular "
+                            + "o tempo mínimo porque "
+                            + "o grafo possui ciclo."
+            );
+
+            return;
+        }
+
         grafo.calcularTempoMinimo();
+    }
+
+    // Verifica se o grafo possui ciclos
+    public void verificarCiclos() {
+
+        System.out.println(
+                "\n===== VERIFICAÇÃO DE CICLOS ====="
+        );
+
+        if (grafo.possuiCiclo()) {
+
+            System.out.println(
+                    "O grafo possui ciclo."
+            );
+
+        } else {
+
+            System.out.println(
+                    "O grafo é acíclico."
+            );
+        }
+    }
+
+
+    // Exibe disciplinas que possuem pré-requisitos
+    public void exibirDisciplinasComPreRequisitos() {
+
+        System.out.println(
+                "\n===== DISCIPLINAS COM PRÉ-REQUISITOS ====="
+        );
+
+        boolean encontrou = false;
+
+        for (Disciplina disciplina :
+                grafo.obterTodasDisciplinas()) {
+
+            if (!disciplina.getPreRequisitos().isEmpty()) {
+
+                System.out.println(
+                        "\n" + disciplina.getNome()
+                );
+
+                System.out.println(
+                        "Pré-requisitos:"
+                );
+
+                for (Disciplina pre :
+                        disciplina.getPreRequisitos()) {
+
+                    System.out.println(
+                            "- " + pre.getNome()
+                    );
+                }
+
+                encontrou = true;
+            }
+        }
+
+        if (!encontrou) {
+
+            System.out.println(
+                    "Nenhuma disciplina possui pré-requisitos."
+            );
+        }
     }
 
     // Limpa sistema
